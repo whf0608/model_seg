@@ -1,0 +1,2 @@
+deal  images: /home/wanghaifeng/project_work/datasets/changedetection_dataset/zaihai/imgs1/train/mask1
+deal  images: /home/wanghaifeng/project_work/datasets/changedetection_dataset/zaihai/imgs1/train/mask1

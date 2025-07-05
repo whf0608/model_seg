@@ -1,0 +1,1 @@
+{"dataset": "pascal", "img_size": "(1024,1024)", "optimizer": "sgd", "schedulers": "constant_lr", "loss": "cross_entropy", "model": "baseline"}

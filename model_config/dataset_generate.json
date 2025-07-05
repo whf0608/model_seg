@@ -1,0 +1,1 @@
+{"seed": 1337, "data": {"dataset": "generate", "path": "", "data_img_size": [640, 640],"split":"","use_sub": [""], "index": "","limt_num":null}, "training": {"batch_size": 16, "n_workers": 16,"img_size": [640, 640], "optimizer": {"name": "sgd", "lr": 4.0e-5, "weight_decay": 0.0005, "momentum": 0.99}, "lr_schedule": null}}
