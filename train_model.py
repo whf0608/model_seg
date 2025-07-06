@@ -7,7 +7,7 @@ from torch.amp import autocast
 torch.backends.cudnn.enable =True
 torch.backends.cudnn.benchmark = True
 
-def train_model(model,device=None,start_epoch=0,epochs=2,amp = True,n_classes=3, trainloader=None, valloader=None, testloader=None,optimizer=None, scheduler=None,get_loss_func=None,get_val_func=None,get_test_func=None,train_proccesing=None,per_n=1,model_vis=False, update_lr_paramter=None):
+def train_model(model,device=None,start_epoch=0,epochs=2,amp = True,n_classes=3, trainloader=None, valloader=None, testloader=None,optimizer=None, scheduler=None,get_loss_func=None,get_val_func=None,get_test_func=None,train_proccesing=None,per_n=1,model_vis=False):
     if model_vis:
         model_vis=train_proccesing
     else:
@@ -49,9 +49,7 @@ def train_model(model,device=None,start_epoch=0,epochs=2,amp = True,n_classes=3,
             if train_proccesing: train_proccesing(tag='epoch_lss',v=[0,epoch,lss])
             
             scheduler.step()   
-            if update_lr_paramter and epoch%10==0 and epoch>10:
-                optimizer,scheduler=update_lr_paramter(model,epoch)
-            
+
             if train_proccesing: train_proccesing(tag='epoch_model',v=[i,epoch,model.state_dict()])
             # if train_proccesing is not None: train_proccesing(tag='epoch_lss',v=[i,epoch,lss])
             if valloader:
@@ -59,11 +57,9 @@ def train_model(model,device=None,start_epoch=0,epochs=2,amp = True,n_classes=3,
                 if train_proccesing:
                     train_proccesing(tag='epoch_train_val_lss',v=[i,epoch,lss,vallss])
                     model_best,eq_loss = train_proccesing(tag='epoch_vallss_model',v=[i,epoch,vallss,model.state_dict()])
-                    # if model_best:
-                    #     print('updating model paramter')
-                    #     model.load_state_dict(model_best)
-                    if eq_loss:
-                         if update_lr_paramter:optimizer,scheduler=update_lr_paramter(model,epoch)
+                    if model_best:
+                        print('updating model paramter')
+                        model.load_state_dict(model_best)
 
             pbar.set_postfix(**{'loss': sum(lss) / len(lss),'valloss': sum(vallss) / len(vallss)})
     if testloader is not None: val_model(model,testloader,get_test_func,device,per_n=1)
