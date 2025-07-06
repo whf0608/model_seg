@@ -2,6 +2,7 @@ from tqdm import tqdm
 import torch
 import cv2
 import numpy as np
+from metrics.metrics import Evaluator
 from torch.amp import autocast
 torch.backends.cudnn.enable =True
 torch.backends.cudnn.benchmark = True
@@ -63,10 +64,9 @@ def train_model(model,device=None,start_epoch=0,epochs=2,amp = True,n_classes=3,
                     #     model.load_state_dict(model_best)
                     if eq_loss:
                          if update_lr_paramter:optimizer,scheduler=update_lr_paramter(model,epoch)
-  
-                    
+
             pbar.set_postfix(**{'loss': sum(lss) / len(lss),'valloss': sum(vallss) / len(vallss)})
-    if testloader is not None: test_model_1(model,testloader,get_test_func,device,per_n=1)
+    if testloader is not None: val_model(model,testloader,get_test_func,device,per_n=1)
             
 def val_model(model,valloader=None,get_val_func=None,device=None,per_n=4,train_proccesing=None,epoch=0):
     model.eval()
@@ -82,45 +82,4 @@ def val_model(model,valloader=None,get_val_func=None,device=None,per_n=4,train_p
                 lss.append(loss.item())
     return lss   
 
-def test_model_1(model, testloader=None, get_test_func=None, device=None, per_n=4):
-    model.eval()
-    print('testing model')
-    lss = []
-    for i, images in enumerate(testloader):
-        img = images[list(images.keys())[0]].to(device).float()
-        img = torch.nn.functional.normalize(img).contiguous()
-        with torch.no_grad():
-            for _ in range(per_n):
-                rs=model(img)
-                loss = get_test_func(rs,images)
-                
-                lss.append(loss.item())
-    return lss
-
-
-def test_model(model, testloader=None, get_test_func=None, device=None, img_size=(640,640), test_proccesing=None):
-    model.eval()
-    print('... test model ...')
-    
-    for dataset_name, dataset_path, img_ps in testloader():
-        print('dataset_name: ', dataset_name, 'imgs num:', len(img_ps))
-        for i,img_p in enumerate(img_ps):
-            img = cv2.imread(img_p)
-            if img is None: continue
-            img = cv2.resize(img, img_size)
-
-            img = img.transpose(2, 0, 1)
-            img = np.array([img])
-            img = torch.from_numpy(img).to(device)
-            img = img/255
-
-            with torch.no_grad():
-                rs = model(img)
-                if test_proccesing:  test_proccesing(tag='epoch_test_images',v=[i, img_p, rs])
-
-        if get_test_func: get_test_func(dataset_name, dataset_path)
-        
-    if get_test_func: get_test_func(dataset_name, dataset_path, test_end=True)
-    if test_proccesing: test_proccesing(tag='epoch_test_end', v=[i, img_p, rs])
-    return 0
 
