@@ -49,8 +49,8 @@ def parse_args():
 
 def init_file(work_space='weights/',data_name='data', model_name='model', flag=None):
     if flag is None or not flag:
-        flag = time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime())
-    save_path = work_space + '/' + data_name +'/' + model_name+ '/' + model_name + '_' + flag
+        flag = time.strftime("%Y_%m_%d_%H", time.localtime())
+    save_path = work_space + '/' + data_name +'/' + model_name + '_' + flag
 
     if not Path(save_path).exists():
          os.makedirs(save_path, exist_ok=True)
