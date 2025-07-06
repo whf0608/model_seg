@@ -1,2 +1,5 @@
 model_zoos/mamba/vssm_base_0229_ckpt_epoch_237.pt
+*.idea
 *.pth
+*.ipnb_chackpoints
+*.vscode
