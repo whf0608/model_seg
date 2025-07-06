@@ -7,9 +7,13 @@ from .cross_model_same_scale_multi_keral import Model as Unet_cross_model_multi_
 from .cross_model_same_scale import Fusion2Backbone as Unet_cross_model
 
 
-from .FDD_model_3_3 import UNet as FDD_3_3
-from .FDD_model_3_3_2 import UNet as FDD_model_3_3_2
-from .FDD_model_5_3 import UNet as FDD_model_5_3
+from .cfd_3 import UNet as cfd_3
+from .cfd_3_vgg import UNet as cfd_3_vgg
+from .cfd_3_down_up import UNet as cfd_3_down_up
+from .cfd_5 import UNet as cfd_5
+from .cfd_5_cov import UNet as cfd_5_cov
+from .cfd_5_vgg import UNet as cfd_5_vgg
+from .cfd_5_vit import UNet as cfd_5_vit
 
 from .unet_multitask import UNet as Unet_multitask
 
@@ -33,9 +37,13 @@ model_dic = {'Unet_down_up':UNet,
              'SeNet154_Unet_Loc':SeNet154_Unet_Loc,
              'SeNet154_Unet_Double':SeNet154_Unet_Double,
              
-            'FDD_3_3':FDD_3_3,
-            'FDD_model_3_3_2': FDD_model_3_3_2,
-             'FDD_model_5_3':FDD_model_5_3,
+             'cfd_3':cfd_3,
+             'cfd_3_vgg':cfd_3_vgg,
+             'cfd_3_down_up':cfd_3_down_up,
+             'cfd_5':cfd_5,
+             'cfd_5_cov':cfd_5_cov,
+             'cfd_5_vgg':cfd_5_vgg,
+             'cfd_5_vit':cfd_5_vit,
 
              'Unet_multitask': Unet_multitask
           
