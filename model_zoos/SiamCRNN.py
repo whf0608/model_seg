@@ -44,7 +44,7 @@ class ResBlock(nn.Module):
 
 
 class SiamCRNN(nn.Module):
-    def __init__(self,in_channels=3, out_channels=4):
+    def __init__(self,in_channels=3, n_classes=4):
         super(SiamCRNN, self).__init__()
         expansion = 1
 
@@ -87,7 +87,7 @@ class SiamCRNN(nn.Module):
         
 
         self.main_clf_loc = nn.Conv2d(in_channels=128, out_channels=2, kernel_size=1)
-        self.main_clf_clf = nn.Conv2d(in_channels=128, out_channels=out_channels, kernel_size=1)
+        self.main_clf_clf = nn.Conv2d(in_channels=128, out_channels=n_classes, kernel_size=1)
 
     def _upsample_add(self, x, y):
         _, _, H, W = y.size()

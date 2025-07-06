@@ -12,21 +12,14 @@ from .cityscapes_loader import cityscapesLoader
 from .nyuv2_loader import NYUv2Loader
 from .sunrgbd_loader import SUNRGBDLoader
 from .mapillary_vistas_loader import mapillaryVistasLoader
-from .disaster import DisasterDataset
 from .generate_img import GenerateDataset
 from .seg_dataset import SegDataset
-from .segmuilt_dataset import SegMuiltDataset
-from .disasters_dataset import DisasterDataset as DisasterDataset1
 from .cbr_dataset import SegfixDataset
 from .map_dataset import MapDataset
-from .db_dataset import DamageAssessmentDatset
+from .bdseg_dataset import BDsegDataset
 data_dic = {
-        "disaster_v1": DisasterDataset,
         "generate": GenerateDataset,
-        "seg_dataset": SegDataset,
-        "segmuilt_dataset":SegMuiltDataset,
-        "disaster_v2": DisasterDataset1,
-        "disaster_dataset": DisasterDataset1,
+        "SegDataset": SegDataset,
         "pascal": pascalVOCLoader,
         "camvid": camvidLoader,
         "ade20k": ADE20KLoader,
@@ -37,47 +30,29 @@ data_dic = {
         "vistas": mapillaryVistasLoader,
         "segfixDataset": SegfixDataset,
         "mapdataset":MapDataset,
-        "DamageAssessmentDatset":DamageAssessmentDatset
+        "BDsegDataset":BDsegDataset
     }
-
-# import sys
-# sys.path.append('../segmention_buildings/BuildFormer')
-# try:
-#     import geoseg
-#     from geoseg.datasets.dataset import Dataset as GeoDatset
-#     data_dic["geodatset"]=  GeoDatset
-# except:
-#     print('not import geoseg')
-#     print('Geodatset erro ')
 
 
 def get_loader(name):
-    """get_loader
-
-    :param name:
-    """
     print("init dataset: ", name)
     return data_dic[name]
 
-
-
 def get_dataloader(cfg,model="training"):
-    data_loader = get_loader(cfg["data"]["dataset"])
-    print("-----------------------",cfg['data']['path'])
-    print('data config: ',cfg)
-    if model=="training":
-        train_dataset = data_loader(data_root=cfg['data']['path'], img_size=cfg[model]["img_size"],**cfg['data'])
-        trainloader = data.DataLoader(train_dataset, batch_size=cfg[model]["batch_size"],num_workers=cfg[model]["n_workers"],shuffle=True,drop_last=True)
 
-        if "valing" in cfg.keys():
-            val_dataset = data_loader(data_root=cfg['data']['path'], img_size=cfg['valing']["img_size"],**cfg['data'])
-            valloader = data.DataLoader(val_dataset, batch_size=cfg['valing']["batch_size"], num_workers=cfg['valing']["n_workers"])
-        else:
-            val_dataset = train_dataset
-            valloader = data.DataLoader(val_dataset, batch_size=cfg[model]["batch_size"], num_workers=cfg[model]["n_workers"])
-        return trainloader, valloader
+    if model=="training":
+        data_loader = get_loader(cfg['training']["data"]["dataset"])
+        print("-----------------------",cfg['training']["data"]["dataset"])
+        train_dataset = data_loader(**cfg['training']['data'])
+        trainloader = data.DataLoader(train_dataset, batch_size=cfg["training"]["batch_size"],num_workers=cfg["training"]["n_workers"],shuffle=True,drop_last=True)
+        data_loader = get_loader(cfg['val']["data"]["dataset"])
+        val_dataset = data_loader(**cfg['val']['data'])
+        valloader = data.DataLoader(val_dataset, batch_size=cfg['val']["batch_size"], num_workers=cfg['val']["n_workers"])
+       
+    return trainloader, valloader
     
     if model=="testing":
-        test_dataset = data_loader(data_root=cfg['data']['path'], img_size=cfg['testing']["img_size"],**cfg['testing']['data'])
+        data_loader = get_loader(cfg['testing']["data"]["dataset"])
+        test_dataset = data_loader(**cfg['testing']['data'])
         testloader = data.DataLoader(test_dataset, batch_size=cfg['testing']["batch_size"], num_workers=cfg['testing']["n_workers"])
         return testloader
