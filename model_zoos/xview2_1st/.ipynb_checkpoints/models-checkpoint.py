@@ -130,7 +130,7 @@ class SeResNext50_Unet_Loc(nn.Module):
 
         dec10 = self.conv10(F.interpolate(dec9, scale_factor=2))
 
-        return self.res(dec10)
+        return self.res(dec10),self.res(dec10)
 
 
     def _initialize_weights(self):
@@ -217,7 +217,7 @@ class SeResNext50_Unet_Double(nn.Module):
 
         dec10 = torch.cat([dec10_0, dec10_1], 1)
 
-        return self.res(dec10)
+        return self.res(dec10),self.res(dec10)
 
 
     def _initialize_weights(self):
@@ -302,7 +302,7 @@ class Dpn92_Unet_Loc(nn.Module):
 
         dec10 = self.conv10(F.interpolate(dec9, scale_factor=2))
 
-        return self.res(dec10)
+        return self.res(dec10),self.res(dec10)
 
 
     def _initialize_weights(self):

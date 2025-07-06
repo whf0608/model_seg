@@ -1,9 +1,8 @@
-from init import *
 import numpy as np
 from torch import nn
 import torch
 from modules.blocks.yolo_blocks import C3, Conv
-from modules.blocks.input_blocks import MultiKernelInput,CovAndHW,Fusion2Branch,Fusion3Branch
+from modules.blocks.input_blocks import MultiKernelInput,CovAndHW
 
 
 class Fusion2Backbone(nn.Module):
@@ -59,12 +58,12 @@ class Cov_Act(nn.Module):
 
 
 class Model(nn.Module):
-    def __init__(self, ch=3):
+    def __init__(self, n_channels=3, n_classes=2):
         super(Model, self).__init__()
-        self.ch = ch
+        self.ch = n_channels
         self.m_ch = 32
-        self.out_ch = 1
-        self.MI = MultiKernelInput(3, self.m_ch)
+        self.out_ch =  n_classes
+        self.MI = MultiKernelInput(self.ch, self.m_ch)
         self.model = nn.Sequential()
         self.fb = Fusion2Backbone(self.m_ch, ns=[6, 1, 1, 6, 1, 1], ss=[1, 1, 1, 1, 1, 1])
         self.cov1 = Conv(self.m_ch, self.out_ch, 3, 1, 1)
@@ -78,61 +77,3 @@ class Model(nn.Module):
         x1 = self.cov1(x1)
         x2 = self.cov2(x2)
         return x1, x2
-
-# blocks=[conv3x3,residualBlock,conv3x3,residualBlock,conv3x3,residualBlock,conv3x3], repeats=[1,3,1,3,1,3,1],downs=[1,1,2,1,1,1,1]
-# model = Model(3)
-# imgs = torch.zeros((1,3,640,640))
-# r1,r2 = model(imgs,imgs)
-# print(r1.shape)
-
-
-def train_model():
-    import torchvision
-    resize = torchvision.transforms.Resize((320, 320), interpolation=2)
-
-    # torch.cuda.empty_cache()
-    device = 'cuda:6'
-    epochs = 500
-
-    fb = Model(3)
-    fb = fb.to(device)
-    fb = fb.train()
-    fb = fb.half()
-
-    cfg0['training']['batch_size'] = 8
-    cfg0['data']['img_rows'] = 640
-    cfg0['data']['img_cols'] = 640
-
-    n_claess, train_loader, val_loder = get_dataloader(cfg0)
-    optimizer, scheduler = get_optimizer_scheduler(fb)
-
-    for epoch in range(epochs):
-        losses = []
-        # optimizer.zero_grad()
-        for images in train_loader:
-            optimizer.zero_grad()
-
-            t1 = images['t1'].to(device).half()
-            # print(t1.shape)
-            t2 = images['t2'].to(device).half()
-
-            t1_b = images['t1_b'].to(device).half()
-            t2_b = images['t2_b'].to(device).half()
-            #         t1 = images['image_mask'].to(device).half()
-            #         t2 = images['image_mask'].to(device).half()
-            #         t1_b = images['image'].to(device).half()
-            #         t2_b = images['image'].to(device).half()
-            r1, r2 = fb(t1, t2)
-            t1_b = resize(t1_b)
-            t2_b = resize(t2_b)
-
-            loss = (torch.abs(r1 - t1_b).double().sum() / r1.shape.numel() + torch.abs(
-                r2 - t2_b).double().sum() / r2.shape.numel()) / 0.1
-            # print(loss.detach().cpu().numpy())
-            loss.backward()
-            optimizer.step()
-            scheduler.step()
-
-            losses.append(loss.detach().cpu().numpy())
-
-        print('epoch' + str(epoch) + ' :', np.sum(losses) / len(losses))

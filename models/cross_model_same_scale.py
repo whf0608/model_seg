@@ -54,33 +54,3 @@ class Cov_Act(nn.Module):
         x = self.conv(x)
         x = self.act(x)
         return x
-
-def train_model():
-    cfg['training']['batch_size'] = 16
-
-    fb = Fusion2Backbone(3, ns=[6, 1, 1, 6, 1, 1], ss=[1, 1, 1, 1, 1, 1])
-    n_claess, train_loader, val_loder = get_dataloader(cfg)
-    optimizer, scheduler = get_optimizer_scheduler(fb)
-    device = 'cuda:5'
-    epochs = 500
-    fb = fb.train()
-    fb = fb.to(device).half()
-
-    for epoch in range(epochs):
-        losses = []
-        for images in train_loader:
-            scheduler.step()
-            optimizer.zero_grad()
-            t1 = images['image_mask'].to(device).half()
-            t2 = images['image_mask'].to(device).half()
-            t1_b = images['image'].to(device).half()
-            t2_b = images['image'].to(device).half()
-
-            r1, r2 = fb(t1, t2)
-            loss = (torch.abs(r1 - t1_b).double().sum() / r1.shape.numel() + torch.abs(
-                r2 - t2_b).double().sum() / r2.shape.numel()) / 1.0
-            loss.backward()
-            optimizer.step()
-
-            losses.append(loss.detach().cpu().numpy())
-        print('epoch' + str(epoch) + ' :', np.sum(losses) / len(losses))

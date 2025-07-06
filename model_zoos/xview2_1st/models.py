@@ -130,7 +130,7 @@ class SeResNext50_Unet_Loc(nn.Module):
 
         dec10 = self.conv10(F.interpolate(dec9, scale_factor=2))
 
-        return self.res(dec10)
+        return self.res(dec10),self.res(dec10)
 
 
     def _initialize_weights(self):
@@ -217,7 +217,7 @@ class SeResNext50_Unet_Double(nn.Module):
 
         dec10 = torch.cat([dec10_0, dec10_1], 1)
 
-        return self.res(dec10)
+        return self.res(dec10),self.res(dec10)
 
 
     def _initialize_weights(self):
@@ -302,7 +302,7 @@ class Dpn92_Unet_Loc(nn.Module):
 
         dec10 = self.conv10(F.interpolate(dec9, scale_factor=2))
 
-        return self.res(dec10)
+        return self.res(dec10),self.res(dec10)
 
 
     def _initialize_weights(self):
@@ -398,7 +398,7 @@ class Dpn92_Unet_Double(nn.Module):
 
         dec10 = torch.cat([dec10_0, dec10_1], 1)
 
-        return self.res(dec10)
+        return self.res(dec10),self.res(dec10)
 
 
     def _initialize_weights(self):
@@ -473,7 +473,7 @@ class Res34_Unet_Loc(nn.Module):
 
         dec10 = self.conv10(F.interpolate(dec9, scale_factor=2))
 
-        return self.res(dec10)
+        return self.res(dec10),self.res(dec10)
 
     def _initialize_weights(self):
         for m in self.modules():
@@ -552,7 +552,7 @@ class Res34_Unet_Double(nn.Module):
         dec10_0 = self.forward1(x[:, :3, :, :])
         dec10_1 = self.forward1(x[:, 3:, :, :])
         dec10 = torch.cat([dec10_0, dec10_1], 1)
-        return self.res(dec10)
+        return self.res(dec10),self.res(dec10)
         
     def _initialize_weights(self):
         for m in self.modules():
@@ -627,7 +627,7 @@ class SeNet154_Unet_Loc(nn.Module):
 
         dec10 = self.conv10(F.interpolate(dec9, scale_factor=2))
 
-        return self.res(dec10)
+        return self.res(dec10),self.res(dec10)
 
     def _initialize_weights(self):
         for m in self.modules():
@@ -710,7 +710,7 @@ class SeNet154_Unet_Double(nn.Module):
 
         dec10 = torch.cat([dec10_0, dec10_1], 1)
 
-        return self.res(dec10)
+        return self.res(dec10),self.res(dec10)
 
     def _initialize_weights(self):
         for m in self.modules():

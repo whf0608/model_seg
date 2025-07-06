@@ -10,11 +10,13 @@ from .soft_ce import SoftCrossEntropyLoss
 from .tversky import TverskyLoss
 from .mcc import MCCLoss
 from .seg_loss import dice_loss
-from .my_loss import unet_loss_func, rdd_3_loss_func,rdd_3_loss_func_muilt,multitask_loss_func,rdd_5_loss_func, loss_cross_entropy,loss_cross_entropy_mutliclas,rdd_5_3_loss_func,rdd_5_loss_func1,unet_loss_func2,loss_cross_entropy_lovasz
 from .cbrnet_loss import loss as cbrnet_loss
 from .cbrnet_loss import loass_1 as cbrnet_loss_1
 import functools
 from .useful_loss import EdgeLoss
+from .loccls_loss import loss_cross_entropy_lovasz,loccls_loss
+
+from .my_loss import *
 
 from .losses import (
     cross_entropy2d,
@@ -35,19 +37,11 @@ loss_dic = {
     'TverskyLoss': TverskyLoss,
     'MCCLoss': MCCLoss,
     'dice_loss': dice_loss,
-    'unet_loss': unet_loss_func,
-    'rdd_3_loss': rdd_3_loss_func,
-    'rdd_3_loss_func_muilt': rdd_3_loss_func_muilt,
-    'multitask_loss_func': multitask_loss_func,
-    'rdd_5_loss_func': rdd_5_loss_func,
-    'rdd_5_3_loss_func': rdd_5_3_loss_func,
-    'rdd_5_loss_func1': rdd_5_loss_func1,
     'cbrnet_loss': cbrnet_loss,
     'cbrnet_loss_1': cbrnet_loss_1,
     'edgeLoss': EdgeLoss,
-    'loss_cross_entropy': loss_cross_entropy,
-    'unet_loss_func2':unet_loss_func2,
-    'loss_cross_entropy_mutliclas': loss_cross_entropy_mutliclas,
+    #------------------------------
+    'loccls_loss': loccls_loss,
     'loss_cross_entropy_lovasz':loss_cross_entropy_lovasz
 }
 
